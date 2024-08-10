@@ -6,13 +6,13 @@ import (
 )
 
 type Server struct {
-    // Define your server fields, like address and connections
+    // Define server fields, like address and connections
     Addr string
 }
 
 func New() *Server {
     return &Server{
-        Addr: "127.0.0.1:6379", // Example address
+        Addr: "127.0.0.1:6379", // Redis runs on port 6379
     }
 }
 
@@ -36,7 +36,6 @@ func (s *Server) Start() {
 }
 
 func (s *Server) handleConnection(conn net.Conn) {
-    // Handle client connection
     defer conn.Close()
     // Example: simple echo
     buffer := make([]byte, 1024)
