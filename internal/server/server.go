@@ -3,7 +3,7 @@ package server
 import (
     "fmt"
     "net"
-    "github.com/Madduxv/mini-redis/internal/protocol/parser"
+    "github.com/Madduxv/mini-redis/internal/protocol"
 )
 
 type Server struct {
@@ -38,12 +38,13 @@ func (s *Server) Start() {
 
 func (s *Server) handleConnection(conn net.Conn) {
     defer conn.Close()
-    // Example: simple echo
     buffer := make([]byte, 1024)
     n, err := conn.Read(buffer)
     if err != nil {
         fmt.Println("Error reading from connection:", err)
         return
     }
-    conn.Write(buffer[:n])
+    /* commands, parsed_data, err :=  */protocol.ParseRESP(buffer[:n])
+    // conn.Write([]byte(commands))
+    // conn.Write(buffer[:n])
 }

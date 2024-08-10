@@ -1,6 +1,9 @@
 package protocol
 
-import ("fmt"; "bytes")
+import (
+	"fmt"
+	"strings"
+)
 
 /* RESP:
    *x-> An array with x elements
@@ -32,14 +35,16 @@ func ParseRESP(data []byte) (command string, args []string, err error) {
     if len(data) == 0 || data[0] != '*' {
         return "", nil, fmt.Errorf("invalid RESP format")
     }
-    data_split := bytes.Split(data, []byte("\r\n")) 
-    fmt.Print(data_split)
+    args = strings.Split(string(data), "\n") 
+    fmt.Printf("Args: %s \r\n", args)
 
     // Parse number of elements in the array
     // Your parsing logic here...
 
     // Example: Convert a bulk string part to a string
-    command = string(data[3:6]) // This would extract "SET" from a properly formatted input
+    // command = string(data[3:6]) // This would extract "SET" from a properly formatted input
+    command = string(args[2])
+    fmt.Printf("Command: %s \r\n", command)
 
     return command, args, nil
 }
