@@ -1,50 +1,63 @@
 package server
 
 import (
-    "fmt"
-    "net"
-    "github.com/Madduxv/mini-redis/internal/protocol"
+  "fmt"
+  "net"
+  "github.com/Madduxv/mini-redis/internal/protocol"
 )
 
-type Server struct {
-    // Define server fields, like address and connections
-    Addr string
-}
+// StartServer starts the Redis server.
+func StartServer() {
+  ln, err := net.Listen("tcp", ":6379")
+  if err != nil {
+    fmt.Println("Error starting server:", err)
+    return
+  }
+  defer ln.Close()
 
-func New() *Server {
-    return &Server{
-        Addr: "127.0.0.1:6379", // Redis runs on port 6379
-    }
-}
+  srv := NewServer()
 
-func (s *Server) Start() {
-    listener, err := net.Listen("tcp", s.Addr)
+  fmt.Println("Server is running on port 6379...")
+  for {
+    conn, err := ln.Accept()
     if err != nil {
-        fmt.Println("Error starting server:", err)
-        return
+      fmt.Println("Error accepting connection:", err)
+      continue
     }
-    fmt.Println("Server started on", s.Addr)
 
-    // Accept connections and handle them
-    for {
-        conn, err := listener.Accept()
-        if err != nil {
-            fmt.Println("Error accepting connection:", err)
-            continue
-        }
-        go s.handleConnection(conn)
-    }
+    go handleConnection(conn, srv)
+  }
 }
 
-func (s *Server) handleConnection(conn net.Conn) {
-    defer conn.Close()
-    buffer := make([]byte, 1024)
-    n, err := conn.Read(buffer)
-    if err != nil {
-        fmt.Println("Error reading from connection:", err)
-        return
+func (s *Server) handleConnection(conn net.Conn, srv *Server) {
+  defer conn.Close()
+  buffer := make([]byte, 1024)
+  n, err := conn.Read(buffer)
+  if err != nil {
+    fmt.Println("Error reading from connection:", err)
+    return
+  }
+  command, args, err := protocol.ParseRESP(buffer[:n])
+
+  switch command {
+  case "HSET":
+    if len(args) != 3 {
+      conn.Write([]byte("ERR wrong number of arguments for 'HSET' command\n"))
     }
-    /* commands, parsed_data, err :=  */protocol.ParseRESP(buffer[:n])
-    // conn.Write([]byte(commands))
-    // conn.Write(buffer[:n])
+    srv.HandleHSet(args[0], args[1], args[2])
+    conn.Write([]byte("OK\n"))
+  case "HGET":
+    if len(args) != 2 {
+      conn.Write([]byte("ERR wrong number of arguments for 'HGET' command\n"))
+    }
+    value, exists := srv.HandleHGet(args[0], args[1])
+    if exists {
+      conn.Write([]byte(value + "\n"))
+    } else {
+      conn.Write([]byte("(nil)\n"))
+    }
+  default:
+    conn.Write([]byte("ERR unknown command '" + command + "'\n"))
+  }
+
 }
