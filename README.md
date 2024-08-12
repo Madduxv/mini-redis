@@ -1,8 +1,11 @@
 # mini-redis
 **This is a mini redis server created in Go.**
 To interract with the server, you can do so with netcat:
-`nc 127.0.0.1 6379`
-*The server will only read 1024 bytes for each command* 
+```
+nc 127.0.0.1 6379
+```
+> [!WARNING]
+> The server will only read 1024 bytes for each command
 
 ## Commands and Responses
 **Command Format: CMD\nitem1\n...\nitemn** 
