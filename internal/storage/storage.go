@@ -1,30 +1,30 @@
 package storage
 
 type Storage struct {
-  store map[string]map[string]string
+  storeString map[string]map[string]string
+  storeList map[string]map[string][]string
 }
 
 func NewStorage() *Storage {
   return &Storage{
-    store: make(map[string]map[string]string),
+    storeString: make(map[string]map[string]string),
+    storeList: make(map[string]map[string][]string),
   }
 }
 
-// HSet sets a field in the hash stored at key to value.
 func (s *Storage) HSet(key string, field string, value string) {
     // Check if the key already exists in the store
-    if _, exists := s.store[key]; !exists {
+    if _, exists := s.storeString[key]; !exists {
         // If not, create a new hash map for this key
-        s.store[key] = make(map[string]string)
+        s.storeString[key] = make(map[string]string)
     }
 
     // Set the field in the hash
-    s.store[key][field] = value
+    s.storeString[key][field] = value
 }
 
-// HGet gets the value of a field in the hash stored at key.
 func (s *Storage) HGet(key string, field string) (string, bool) {
-    if fields, exists := s.store[key]; exists {
+    if fields, exists := s.storeString[key]; exists {
         if value, fieldExists := fields[field]; fieldExists {
             return value, true
         }
