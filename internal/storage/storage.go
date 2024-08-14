@@ -13,11 +13,18 @@ func NewStorage() *Storage {
 }
 
 func (s *Storage) HSet(key string, field string, value string) {
-  if _, exists := s.stringStore[key]; !exists {
+  if _, strStoreExists := s.stringStore[key]; !strStoreExists {
     s.stringStore[key] = make(map[string]string)
   }
   s.stringStore[key][field] = value
 }
+
+func (s *Storage) HSetList(key string, field string, value []string) {
+  if _, listStoreExists := s.listStore[key]; !listStoreExists {
+    s.listStore[key] = make(map[string][]string)
+  }
+  s.listStore[key][field] = value
+} 
 
 func (s *Storage) HGet(key string, field string) (string, bool) {
   if fields, exists := s.stringStore[key]; exists {
@@ -26,6 +33,15 @@ func (s *Storage) HGet(key string, field string) (string, bool) {
     }
   }
   return "", false
+}
+
+func (s *Storage) HGetList(key string, field string) ([]string, bool) {
+  if fields, exists := s.listStore[key]; exists {
+    if value, fieldExists := fields[field]; fieldExists {
+      return value, true
+    }
+  }
+  return nil, false
 }
 
 func (s *Storage) HRemove(key string) {
@@ -53,18 +69,3 @@ func (s *Storage) HRemoveListField(key, field string) bool {
   return false
 }
 
-func (s *Storage) HSetList(key string, field string, value []string) {
-  if _, exists := s.stringStore[key]; !exists {
-    s.listStore[key] = make(map[string][]string)
-  }
-  s.listStore[key][field] = value
-} 
-
-func (s *Storage) HGetList(key string, field string) ([]string, bool) {
-  if fields, exists := s.listStore[key]; exists {
-    if value, fieldExists := fields[field]; fieldExists {
-      return value, true
-    }
-  }
-  return nil, false
-}

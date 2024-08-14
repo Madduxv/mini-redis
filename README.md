@@ -79,7 +79,7 @@ ITALIAN, AMERICAN, JAPANESE
 - Format: HREMOVELISTFIELD\nKey\nField
 ```netcat
 # example 1: Remove Session Requested Genres
-HREMOVELIST
+HREMOVELISTFIELD
 843c1744-f6c2-6118-6a62-96ea50c2ea1d
 genres
 
@@ -107,7 +107,7 @@ OK
 - Format: HREMOVE\nKey\nField
 ```netcat
 # example 1: Remove Session
-HREMOVELIST
+HREMOVE
 843c1744-f6c2-6118-6a62-96ea50c2ea1d
 
 ```
