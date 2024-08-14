@@ -1,33 +1,70 @@
 package storage
 
 type Storage struct {
-  storeString map[string]map[string]string
-  storeList map[string]map[string][]string
+  stringStore map[string]map[string]string
+  listStore map[string]map[string][]string
 }
 
 func NewStorage() *Storage {
   return &Storage{
-    storeString: make(map[string]map[string]string),
-    storeList: make(map[string]map[string][]string),
+    stringStore: make(map[string]map[string]string),
+    listStore: make(map[string]map[string][]string),
   }
 }
 
 func (s *Storage) HSet(key string, field string, value string) {
-    // Check if the key already exists in the store
-    if _, exists := s.storeString[key]; !exists {
-        // If not, create a new hash map for this key
-        s.storeString[key] = make(map[string]string)
-    }
-
-    // Set the field in the hash
-    s.storeString[key][field] = value
+  if _, exists := s.stringStore[key]; !exists {
+    s.stringStore[key] = make(map[string]string)
+  }
+  s.stringStore[key][field] = value
 }
 
 func (s *Storage) HGet(key string, field string) (string, bool) {
-    if fields, exists := s.storeString[key]; exists {
-        if value, fieldExists := fields[field]; fieldExists {
-            return value, true
-        }
+  if fields, exists := s.stringStore[key]; exists {
+    if value, fieldExists := fields[field]; fieldExists {
+      return value, true
     }
-    return "", false
+  }
+  return "", false
+}
+
+func (s *Storage) HRemove(key string) {
+  if _, exists := s.stringStore[key]; exists {
+    delete(s.stringStore, key)
+  }
+  if _, exists := s.listStore[key]; exists {
+    delete(s.listStore, key)
+  }
+}
+
+func (s *Storage) HRemoveStringField(key, field string) bool {
+  if _, exists := s.stringStore[key]; exists {
+    delete(s.stringStore[key], field)
+    return true
+  }
+  return false
+}
+
+func (s *Storage) HRemoveListField(key, field string) bool {
+  if _, exists := s.stringStore[key]; exists {
+    delete(s.listStore[key], field)
+    return true
+  }
+  return false
+}
+
+func (s *Storage) HSetList(key string, field string, value []string) {
+  if _, exists := s.stringStore[key]; !exists {
+    s.listStore[key] = make(map[string][]string)
+  }
+  s.listStore[key][field] = value
+} 
+
+func (s *Storage) HGetList(key string, field string) ([]string, bool) {
+  if fields, exists := s.listStore[key]; exists {
+    if value, fieldExists := fields[field]; fieldExists {
+      return value, true
+    }
+  }
+  return nil, false
 }

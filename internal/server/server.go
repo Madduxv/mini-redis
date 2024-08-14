@@ -1,10 +1,10 @@
 package server
 
 import (
-	"fmt"
-	"net"
-	"strings"
-	"github.com/Madduxv/mini-redis/internal/protocol"
+  "fmt"
+  "net"
+  "strings"
+  "github.com/Madduxv/mini-redis/internal/protocol"
 )
 
 // StartServer starts the Redis server.
@@ -53,6 +53,13 @@ func handleConnection(conn net.Conn, srv *Server) {
       }
       srv.HandleHSet(args[0], args[1], args[2])
       conn.Write([]byte("\r\nOK\r\n"))
+    case "HSETLIST":
+      if len(args) != 3 {
+        conn.Write([]byte("\nERR wrong number of arguments for 'HSETLIST' command\n"))
+        continue
+      }
+      srv.HandleHSetList(args[0], args[1], strings.Split(strings.TrimSpace(string(args[2])), ","))
+      conn.Write([]byte("\r\nOK\r\n"))
     case "HGET":
       if len(args) != 2 {
         conn.Write([]byte("\nERR wrong number of arguments for 'HGET' command\n"))
@@ -63,6 +70,46 @@ func handleConnection(conn net.Conn, srv *Server) {
         conn.Write([]byte(value + "\n"))
       } else {
         conn.Write([]byte("\r\n(nil)\r\n"))
+      }
+    case "HGETLIST":
+      if len(args) != 2 {
+        conn.Write([]byte("\nERR wrong number of arguments for 'HGETLIST' command\n"))
+        continue
+      }
+      value, exists := srv.HandleHGetList(args[0], args[1])
+      if exists {
+        conn.Write([]byte(strings.Join(value, ",") + "\n"))
+      } else {
+        conn.Write([]byte("\r\n(nil)\r\n"))
+      }
+    case "HREMOVE":
+      if len(args) != 2 {
+        conn.Write([]byte("\nERR wrong number of arguments for 'HREMOVELIST' command\n"))
+        continue
+      }
+      srv.HandleHRemove(args[0])
+      conn.Write([]byte("\nOK\r\n"))
+    case "HREMOVESTRINGFIELD":
+      if len(args) != 3 {
+        conn.Write([]byte("\nERR wrong number of arguments for 'HREMOVESTRINGFIELD' command\n"))
+        continue
+      }
+      if srv.HandleHRemoveStringField(args[0], args[2]) {
+        conn.Write([]byte("\nOK\r\n"))
+        continue
+      } else {
+        conn.Write([]byte("\nEntry does not exist\r\n"))
+      }
+    case "HREMOVELISTFIELD":
+      if len(args) != 3 {
+        conn.Write([]byte("\nERR wrong number of arguments for 'HREMOVELISTFIELD' command\n"))
+        continue
+      }
+      if srv.HandleHRemoveListField(args[0], args[2]) {
+        conn.Write([]byte("\nOK\r\n"))
+        continue
+      } else {
+        conn.Write([]byte("\nEntry does not exist\r\n"))
       }
     default:
       conn.Write([]byte("\nERR unknown command '" + command + "'\n"))

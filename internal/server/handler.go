@@ -1,25 +1,43 @@
 package server
 
 import (
-    "github.com/Madduxv/mini-redis/internal/storage"
+  "github.com/Madduxv/mini-redis/internal/storage"
 )
 
 type Server struct {
-    storage *storage.Storage
+  storage *storage.Storage
 }
 
-// NewServer initializes and returns a new Server instance.
 func NewServer() *Server {
-    return &Server{
-        storage: storage.NewStorage(),
-    }
+  return &Server{
+    storage: storage.NewStorage(),
+  }
 }
 
-// HandleHSet handles the HSET command from a client.
 func (s *Server) HandleHSet(key, field, value string) {
-    s.storage.HSet(key, field, value)
+  s.storage.HSet(key, field, value)
 }
 
 func (s *Server) HandleHGet(key, field string) (string, bool) {
-    return s.storage.HGet(key, field)
+  return s.storage.HGet(key, field)
+}
+
+func (s *Server) HandleHSetList(key string, field string, value []string) {
+  s.storage.HSetList(key, field, value)
+}
+
+func (s *Server) HandleHGetList(key, field string) ([]string, bool) {
+  return s.storage.HGetList(key, field)
+}
+
+func (s *Server) HandleHRemove(key string) {
+  s.storage.HRemove(key)
+}
+
+func (s *Server) HandleHRemoveListField(key string, field string) bool {
+  return s.storage.HRemoveListField(key, field)
+}
+
+func (s *Server) HandleHRemoveStringField(key string, field string) bool {
+  return s.storage.HRemoveStringField(key, field)
 }
