@@ -3,12 +3,23 @@ package storage
 type Storage struct {
   StringStore map[string]map[string]string
   ListStore map[string]map[string][]string
+  LinkedListStore map[string]map[string]*LinkedList
+}
+
+type Node struct {
+  data string
+  next *Node
+}
+
+type LinkedList struct {
+  head *Node
 }
 
 func NewStorage() *Storage {
   return &Storage{
     StringStore: make(map[string]map[string]string),
     ListStore: make(map[string]map[string][]string),
+    LinkedListStore: make(map[string]map[string]*LinkedList),
   }
 }
 
@@ -28,12 +39,28 @@ func (s *Storage) HSet(key string, field string, value string) {
   s.StringStore[key][field] = value
 }
 
-func (s *Storage) LPush(key string, field string, value string) {
-
-}
-
 func (s *Storage) RPush(key string, field string, value string) {
+  if _, keyExists := s.LinkedListStore[key]; !keyExists {
+    s.LinkedListStore[key] = make(map[string]*LinkedList)
+  }
 
+  if _, fieldExists := s.LinkedListStore[key][field]; !fieldExists {
+    s.LinkedListStore[key][field] = &LinkedList{}
+  }
+
+  list := s.LinkedListStore[key][field]
+  newNode := &Node{data: value, next: nil}
+
+  if list.head == nil {
+    list.head = newNode
+    return
+  }
+
+  current := list.head
+  for current.next != nil {
+    current = current.next
+  }
+  current.next = newNode
 }
 
 func (s *Storage) HSetList(key string, field string, value []string) {
