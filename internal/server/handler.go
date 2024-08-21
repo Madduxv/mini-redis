@@ -22,6 +22,10 @@ func (s *Server) HandleHGet(key, field string) (string, bool) {
   return s.storage.HGet(key, field)
 }
 
+func (s *Server) HandleRPush(key, field, value string) {
+  s.storage.RPush(key, field, value)
+}
+
 func (s *Server) HandleHSetList(key string, field string, value []string) {
   s.storage.HSetList(key, field, value)
 }
