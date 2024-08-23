@@ -27,4 +27,17 @@ echo -e "HREMOVESTRINGFIELD\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\nname\n"
 
 sleep 1
 echo -e "HREMOVE\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\n"
+
+sleep 1
+echo -e "RPUSH\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\ngenres\nITALIAN\n"
+
+sleep 1
+echo -e "RPUSH\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\ngenres\nAMERICAN\n"
+
+sleep 1
+echo -e "RPUSH\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\ngenres\nJAPANESE\n"
+
+sleep 1
+echo -e "LRANGE\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\ngenres\n"
+
 } | nc 127.0.0.1 6379
