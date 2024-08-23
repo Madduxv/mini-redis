@@ -38,6 +38,6 @@ sleep 1
 echo -e "RPUSH\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\ngenres\nJAPANESE\n"
 
 sleep 1
-echo -e "LRANGE\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\ngenres\n"
+echo -e "LRANGE\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\ngenres\n0\n-1\n"
 
 } | nc 127.0.0.1 6379
