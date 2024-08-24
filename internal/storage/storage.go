@@ -49,8 +49,15 @@ func (s *Storage) HAdd(key, field, value string) {
 	s.ListStore[key][field] = append(s.ListStore[key][field], value)
 }
 
-func (s *Storage) HRem(key, field, value string) {
-
+func (s *Storage) HRem(key, field, value string) int8 {
+	if _, exists := s.ListStore[key][value]; !exists {
+		return 0
+	}
+	if len(s.ListStore[key][value]) == 0 {
+		return 0
+	}
+	// TODO: Finish this function
+	return 1
 }
 
 func (s *Storage) SRem(key, value string) {
