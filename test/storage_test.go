@@ -1,8 +1,10 @@
 package test
 
 import (
-	"github.com/Madduxv/mini-redis/internal/storage"
+	"fmt"
 	"testing"
+
+	"github.com/Madduxv/mini-redis/internal/storage"
 )
 
 func TestHSet(t *testing.T) {
@@ -25,7 +27,7 @@ func TestRPush(t *testing.T) {
 	defer storage.ClearStorage(store)
 
 	key := "user:1234"
-	field := "name"
+	field := "genres"
 	value0 := "ITALIAN"
 	value1 := "AMERICAN"
 	value2 := "JAPANESE"
@@ -38,6 +40,26 @@ func TestRPush(t *testing.T) {
 
 	if data == nil {
 		t.Error("Data either not going in or not coming out for RPush and LRange")
+	}
+}
+
+func TestHAdd(t *testing.T) {
+	store := storage.NewStorage()
+	defer storage.ClearStorage(store)
+
+	key := "user:1234"
+	field := "genres"
+	value := "ITALIAN"
+	value1 := "AMERICAN"
+	value2 := "JAPANESE"
+
+	store.HAdd(key, field, value)
+	store.HAdd(key, field, value1)
+	store.HAdd(key, field, value2)
+
+	if len(store.ListStore[key][field]) != 3 {
+		t.Error("HAdd failed: Items were not added to the list")
+		fmt.Println(store.ListStore[key][field])
 	}
 }
 

@@ -4,6 +4,7 @@ type Storage struct {
 	StringStore     map[string]map[string]string
 	ListStore       map[string]map[string][]string
 	LinkedListStore map[string]map[string]*LinkedList
+	SetStore        map[string][]string
 }
 
 type Node struct {
@@ -20,6 +21,7 @@ func NewStorage() *Storage {
 		StringStore:     make(map[string]map[string]string),
 		ListStore:       make(map[string]map[string][]string),
 		LinkedListStore: make(map[string]map[string]*LinkedList),
+		SetStore:        make(map[string][]string),
 	}
 }
 
@@ -32,14 +34,34 @@ func ClearStorage(s *Storage) {
 	}
 }
 
-func (s *Storage) HSet(key string, field string, value string) {
+func (s *Storage) HSet(key, field, value string) {
 	if _, strStoreExists := s.StringStore[key]; !strStoreExists {
 		s.StringStore[key] = make(map[string]string)
 	}
 	s.StringStore[key][field] = value
 }
 
-func (s *Storage) RPush(key string, field string, value string) {
+func (s *Storage) HAdd(key, field, value string) {
+	if _, exists := s.ListStore[key]; !exists {
+		s.ListStore[key] = make(map[string][]string)
+		s.ListStore[key][field] = make([]string, 0)
+	}
+	s.ListStore[key][field] = append(s.ListStore[key][field], value)
+}
+
+func (s *Storage) HRem(key, field, value string) {
+
+}
+
+func (s *Storage) SRem(key, value string) {
+
+}
+
+func (s *Storage) SAdd(key, value string) {
+
+}
+
+func (s *Storage) RPush(key, field, value string) {
 	if _, keyExists := s.LinkedListStore[key]; !keyExists {
 		s.LinkedListStore[key] = make(map[string]*LinkedList)
 	}
@@ -63,7 +85,7 @@ func (s *Storage) RPush(key string, field string, value string) {
 	current.next = newNode
 }
 
-func (s *Storage) LRange(key string, field string, start int, end int) []string {
+func (s *Storage) LRange(key, field string, start, end int) []string {
 	// Retrieve the linked list for the given key and field
 	list, keyExists := s.LinkedListStore[key][field]
 	if !keyExists || list.head == nil {
@@ -113,14 +135,14 @@ func (s *Storage) LRange(key string, field string, start int, end int) []string 
 	return result
 }
 
-func (s *Storage) HSetList(key string, field string, value []string) {
+func (s *Storage) HSetList(key, field string, value []string) {
 	if _, ListStoreExists := s.ListStore[key]; !ListStoreExists {
 		s.ListStore[key] = make(map[string][]string)
 	}
 	s.ListStore[key][field] = value
 }
 
-func (s *Storage) HGet(key string, field string) (string, bool) {
+func (s *Storage) HGet(key, field string) (string, bool) {
 	if fields, exists := s.StringStore[key]; exists {
 		if value, fieldExists := fields[field]; fieldExists {
 			return value, true
@@ -129,7 +151,7 @@ func (s *Storage) HGet(key string, field string) (string, bool) {
 	return "", false
 }
 
-func (s *Storage) HGetList(key string, field string) ([]string, bool) {
+func (s *Storage) HGetList(key, field string) ([]string, bool) {
 	if fields, exists := s.ListStore[key]; exists {
 		if value, fieldExists := fields[field]; fieldExists {
 			return value, true
