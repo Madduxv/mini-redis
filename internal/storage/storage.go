@@ -56,24 +56,43 @@ func (s *Storage) HRem(key, field, value string) int8 {
 	if len(s.ListStore[key][value]) == 0 {
 		return 0
 	}
-	// TODO: Finish this function
-	return 1
+	for i := 0; i < len(s.ListStore[key][field]); i++ {
+		if s.ListStore[key][field][i] == value {
+			remove(s.ListStore[key][field], i)
+			return 1
+		}
+	}
+	return 0
 }
 
 func (s *Storage) SAdd(key, value string) {
-	if _, exists := s.ListStore[key]; !exists {
+	if _, exists := s.SetStore[key]; !exists {
 		s.SetStore[key] = make([]string, 0)
 	}
-	// TODO: Finish this function
+	s.SetStore[key] = append(s.SetStore[key], value)
 }
 
 func (s *Storage) SGet(key string) []string {
-
-	return nil
+	if _, exists := s.SetStore[key]; !exists {
+		return nil
+	}
+	return s.SetStore[key]
 }
 
-func (s *Storage) SRem(key, value string) {
-
+func (s *Storage) SRem(key, value string) int8 {
+	if _, exists := s.SetStore[key]; !exists {
+		return 0
+	}
+	if len(s.SetStore[key]) == 0 {
+		return 0
+	}
+	for i := 0; i < len(s.SetStore[key]); i++ {
+		if s.SetStore[key][i] == value {
+			remove(s.SetStore[key], i)
+			return 1
+		}
+	}
+	return 0
 }
 
 func (s *Storage) RPush(key, field, value string) {
@@ -198,4 +217,11 @@ func (s *Storage) HRemoveListField(key, field string) bool {
 		return true
 	}
 	return false
+}
+
+// Helper Functions (I'll put them in their own file if I make enough of them for it to make sense)
+
+func remove(s []string, i int) []string {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
 }

@@ -63,7 +63,7 @@ func TestHAdd(t *testing.T) {
 	}
 }
 
-func TestSAdd(t *testing.T) {
+func TestSAddRem(t *testing.T) {
 	store := storage.NewStorage()
 	defer storage.ClearStorage(store)
 
@@ -75,8 +75,15 @@ func TestSAdd(t *testing.T) {
 	store.SAdd(key, value1)
 
 	if len(store.SetStore[key]) != 2 {
-		t.Error("SAdd failed: Items were not added to the list")
+		t.Errorf("SAdd failed: Items were not added to the list (Found: %v)", store.SetStore[key])
 	}
+
+	store.SRem(key, value)
+
+	if len(store.SetStore[key]) != 1 {
+		t.Errorf("Rem failed: Items were not added to the list (Found: %v)", store.SetStore[key])
+	}
+
 }
 
 func TestHSetList(t *testing.T) {
