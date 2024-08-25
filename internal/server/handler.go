@@ -42,6 +42,14 @@ func (s *Server) HandleHRemove(key string) {
 	s.storage.HRemove(key)
 }
 
+func (s *Server) HandleSAdd(key, value string) {
+
+}
+
+func (s *Server) HandleSGet(key string) {
+
+}
+
 func (s *Server) HandleHRemoveListField(key string, field string) bool {
 	return s.storage.HRemoveListField(key, field)
 }

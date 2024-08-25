@@ -58,7 +58,7 @@ func (s *Storage) HRem(key, field, value string) int8 {
 	}
 	for i := 0; i < len(s.ListStore[key][field]); i++ {
 		if s.ListStore[key][field][i] == value {
-			remove(s.ListStore[key][field], i)
+			s.ListStore[key][field] = append(s.ListStore[key][field][:i], s.ListStore[key][field][i+1:]...)
 			return 1
 		}
 	}
@@ -86,9 +86,10 @@ func (s *Storage) SRem(key, value string) int8 {
 	if len(s.SetStore[key]) == 0 {
 		return 0
 	}
+	// TODO: debug this function
 	for i := 0; i < len(s.SetStore[key]); i++ {
 		if s.SetStore[key][i] == value {
-			remove(s.SetStore[key], i)
+			s.SetStore[key] = append(s.SetStore[key][:i], s.SetStore[key][i+1:]...)
 			return 1
 		}
 	}
@@ -169,6 +170,7 @@ func (s *Storage) LRange(key, field string, start, end int) []string {
 	return result
 }
 
+// TODO: Maybe remove this function
 func (s *Storage) HSetList(key, field string, value []string) {
 	if _, ListStoreExists := s.ListStore[key]; !ListStoreExists {
 		s.ListStore[key] = make(map[string][]string)
@@ -217,11 +219,4 @@ func (s *Storage) HRemoveListField(key, field string) bool {
 		return true
 	}
 	return false
-}
-
-// Helper Functions (I'll put them in their own file if I make enough of them for it to make sense)
-
-func remove(s []string, i int) []string {
-	s[i] = s[len(s)-1]
-	return s[:len(s)-1]
 }

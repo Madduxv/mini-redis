@@ -78,10 +78,10 @@ func TestSAddRem(t *testing.T) {
 		t.Errorf("SAdd failed: Items were not added to the list (Found: %v)", store.SetStore[key])
 	}
 
-	store.SRem(key, value)
+	store.SRem(key, value1)
 
 	if len(store.SetStore[key]) != 1 {
-		t.Errorf("Rem failed: Items were not added to the list (Found: %v)", store.SetStore[key])
+		t.Errorf("Rem failed: Items were not removed from the list (Found: %v)", store.SetStore[key])
 	}
 
 }
