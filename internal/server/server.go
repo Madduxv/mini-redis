@@ -56,6 +56,15 @@ func handleConnection(conn net.Conn, srv *Server) {
 			srv.HandleHSet(args[0], args[1], args[2])
 			conn.Write([]byte("OK\r\n"))
 
+		case "HADD":
+			if len(args) != 3 {
+				conn.Write([]byte("\r\nERR wrong number of arguments for 'HADD' command\r\n"))
+				continue
+			}
+			srv.HandleHAdd(args[0], args[1], args[2])
+			conn.Write([]byte("OK\r\n"))
+
+		// Deprecated
 		case "HSETLIST":
 			if len(args) != 3 {
 				conn.Write([]byte("\r\nERR wrong number of arguments for 'HSETLIST' command\r\n"))
@@ -76,6 +85,7 @@ func handleConnection(conn net.Conn, srv *Server) {
 				conn.Write([]byte("(nil)\r\n"))
 			}
 
+		// Deprecated
 		case "HGETLIST":
 			if len(args) != 2 {
 				conn.Write([]byte("\r\nERR wrong number of arguments for 'HGETLIST' command\r\n"))
@@ -95,6 +105,38 @@ func handleConnection(conn net.Conn, srv *Server) {
 			}
 			srv.HandleRPush(args[0], args[1], args[2])
 			conn.Write([]byte("OK\r\n"))
+
+		case "SADD":
+			if len(args) != 2 {
+				conn.Write([]byte("\r\nERR wrong number of arguments for 'SADD' command\r\n"))
+				continue
+			}
+			srv.HandleSAdd(args[0], args[1])
+			conn.Write([]byte("OK\r\n"))
+
+		case "SREM":
+			if len(args) != 2 {
+				conn.Write([]byte("\r\nERR wrong number of arguments for 'SREM' command\r\n"))
+				continue
+			}
+			removed := srv.HandleSRem(args[0], args[1])
+			if removed == 1 {
+				conn.Write([]byte("1\r\n"))
+			} else {
+				conn.Write([]byte("0\r\n"))
+			}
+
+		case "SGET":
+			if len(args) != 1 {
+				conn.Write([]byte("\r\nERR wrong number of arguments for 'SGET' command\r\n"))
+				continue
+			}
+			value, exists := srv.HandleSGet(args[0])
+			if exists {
+				conn.Write([]byte(strings.Join(value, ",") + "\r\n"))
+			} else {
+				conn.Write([]byte("(nil)\r\n"))
+			}
 
 		case "LRANGE":
 			if len(args) != 4 {

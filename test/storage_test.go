@@ -63,7 +63,7 @@ func TestHAdd(t *testing.T) {
 	}
 }
 
-func TestSAddRem(t *testing.T) {
+func TestSAddGetRem(t *testing.T) {
 	store := storage.NewStorage()
 	defer storage.ClearStorage(store)
 
@@ -82,6 +82,12 @@ func TestSAddRem(t *testing.T) {
 
 	if len(store.SetStore[key]) != 1 {
 		t.Errorf("Rem failed: Items were not removed from the list (Found: %v)", store.SetStore[key])
+	}
+
+	if returned_value, exists := store.SGet(key); !exists {
+		t.Error("SGet says that the field does not exist")
+	} else {
+		t.Logf("SGet: expected: %v, returned %v", returned_value, store.SetStore[key])
 	}
 
 }

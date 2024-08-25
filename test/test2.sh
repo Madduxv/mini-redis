@@ -48,4 +48,19 @@ echo -e "SADD\nMaddux's Group\nTrin\n"
 
 sleep 1
 echo -e "SGET\nMaddux's Group\n"
+
+sleep 1
+echo -e "SREM\nMaddux's Group\nTrin\n"
+
+sleep 1
+echo -e "SGET\nMaddux's Group\n"
+
+sleep 1
+echo -e "SREM\nMaddux's Group\nMaddux\n"
+
+sleep 1
+echo -e "SGET\nMaddux's Group\n"
+
+sleep 1
+echo -e "HREMOVE\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\n"
 } | nc 127.0.0.1 6379

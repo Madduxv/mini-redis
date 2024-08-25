@@ -72,11 +72,11 @@ func (s *Storage) SAdd(key, value string) {
 	s.SetStore[key] = append(s.SetStore[key], value)
 }
 
-func (s *Storage) SGet(key string) []string {
+func (s *Storage) SGet(key string) ([]string, bool) {
 	if _, exists := s.SetStore[key]; !exists {
-		return nil
+		return nil, false
 	}
-	return s.SetStore[key]
+	return s.SetStore[key], true
 }
 
 func (s *Storage) SRem(key, value string) int8 {
