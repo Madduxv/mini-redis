@@ -60,11 +60,19 @@ func (s *Storage) HRem(key, field, value string) int8 {
 	return 1
 }
 
-func (s *Storage) SRem(key, value string) {
-
+func (s *Storage) SAdd(key, value string) {
+	if _, exists := s.ListStore[key]; !exists {
+		s.SetStore[key] = make([]string, 0)
+	}
+	// TODO: Finish this function
 }
 
-func (s *Storage) SAdd(key, value string) {
+func (s *Storage) SGet(key string) []string {
+
+	return nil
+}
+
+func (s *Storage) SRem(key, value string) {
 
 }
 

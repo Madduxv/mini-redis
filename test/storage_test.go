@@ -63,6 +63,22 @@ func TestHAdd(t *testing.T) {
 	}
 }
 
+func TestSAdd(t *testing.T) {
+	store := storage.NewStorage()
+	defer storage.ClearStorage(store)
+
+	key := "Maddux's Group"
+	value := "Maddux"
+	value1 := "Trin"
+
+	store.SAdd(key, value)
+	store.SAdd(key, value1)
+
+	if len(store.SetStore[key]) != 2 {
+		t.Error("SAdd failed: Items were not added to the list")
+	}
+}
+
 func TestHSetList(t *testing.T) {
 	store := storage.NewStorage()
 	defer storage.ClearStorage(store)
