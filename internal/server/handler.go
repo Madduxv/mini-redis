@@ -22,14 +22,6 @@ func (s *Server) HandleHGet(key, field string) (string, bool) {
 	return s.storage.HGet(key, field)
 }
 
-func (s *Server) HandleHAdd(key, field, value string) {
-	s.storage.HAdd(key, field, value)
-}
-
-func (s *Server) HandleHRem(key, field, value string) {
-	s.storage.HRem(key, field, value)
-}
-
 func (s *Server) HandleRPush(key, field, value string) {
 	s.storage.RPush(key, field, value)
 }
@@ -38,18 +30,16 @@ func (s *Server) HandleLRange(key, field string, start, end int) []string {
 	return s.storage.LRange(key, field, start, end)
 }
 
-// Deprecated
-func (s *Server) HandleHSetList(key string, field string, value []string) {
-	s.storage.HSetList(key, field, value)
+func (s *Server) HandleLClear(key, field string) string {
+	err := s.storage.LClear(key, field)
+	if err != nil {
+		return "Nothing to clear"
+	}
+	return "OK"
 }
 
-// Deprecated
-func (s *Server) HandleHGetList(key, field string) ([]string, bool) {
-	return s.storage.HGetList(key, field)
-}
-
-func (s *Server) HandleHRemove(key string) {
-	s.storage.HRemove(key)
+func (s *Server) HandleHRem(key string) {
+	s.storage.HRem(key)
 }
 
 func (s *Server) HandleSAdd(key, value string) {
@@ -64,11 +54,26 @@ func (s *Server) HandleSGet(key string) ([]string, bool) {
 	return s.storage.SGet(key)
 }
 
-// Deprecated
-func (s *Server) HandleHRemoveListField(key string, field string) bool {
-	return s.storage.HRemoveListField(key, field)
+func (s *Server) HandleHDel(key string, field string) bool {
+	return s.storage.HDel(key, field)
 }
 
-func (s *Server) HandleHRemoveStringField(key string, field string) bool {
-	return s.storage.HRemoveStringField(key, field)
-}
+// func (s *Server) HandleHSetList(key string, field string, value []string) {
+// 	s.storage.HSetList(key, field, value)
+// }
+
+// func (s *Server) HandleHGetList(key, field string) ([]string, bool) {
+// 	return s.storage.HGetList(key, field)
+// }
+
+// func (s *Server) HandleHRemoveListField(key string, field string) bool {
+// 	return s.storage.HRemoveListField(key, field)
+// }
+
+// func (s *Server) HandleHAdd(key, field, value string) {
+// 	s.storage.HAdd(key, field, value)
+// }
+
+// func (s *Server) HandleHRem(key, field, value string) {
+// 	s.storage.HRem(key, field, value)
+// }

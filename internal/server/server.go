@@ -56,22 +56,25 @@ func handleConnection(conn net.Conn, srv *Server) {
 			srv.HandleHSet(args[0], args[1], args[2])
 			conn.Write([]byte("OK\r\n"))
 
-		case "HADD":
-			if len(args) != 3 {
-				conn.Write([]byte("\r\nERR wrong number of arguments for 'HADD' command\r\n"))
+		case "HREM":
+			if len(args) != 1 {
+				conn.Write([]byte("\r\nERR wrong number of arguments for 'HREM' command\r\n"))
 				continue
 			}
-			srv.HandleHAdd(args[0], args[1], args[2])
+			srv.HandleHRem(args[0])
 			conn.Write([]byte("OK\r\n"))
 
-		// Deprecated
-		case "HSETLIST":
-			if len(args) != 3 {
-				conn.Write([]byte("\r\nERR wrong number of arguments for 'HSETLIST' command\r\n"))
+		case "HDEL":
+			if len(args) != 2 {
+				conn.Write([]byte("\r\nERR wrong number of arguments for 'HDEL' command\r\n"))
 				continue
 			}
-			srv.HandleHSetList(args[0], args[1], strings.Split(strings.TrimSpace(string(args[2])), ", "))
-			conn.Write([]byte("OK\r\n"))
+			if srv.HandleHDel(args[0], args[1]) {
+				conn.Write([]byte("OK\r\n"))
+				continue
+			} else {
+				conn.Write([]byte("\r\nEntry does not exist\r\n"))
+			}
 
 		case "HGET":
 			if len(args) != 2 {
@@ -81,19 +84,6 @@ func handleConnection(conn net.Conn, srv *Server) {
 			value, exists := srv.HandleHGet(args[0], args[1])
 			if exists {
 				conn.Write([]byte(value + "\r\n"))
-			} else {
-				conn.Write([]byte("(nil)\r\n"))
-			}
-
-		// Deprecated
-		case "HGETLIST":
-			if len(args) != 2 {
-				conn.Write([]byte("\r\nERR wrong number of arguments for 'HGETLIST' command\r\n"))
-				continue
-			}
-			value, exists := srv.HandleHGetList(args[0], args[1])
-			if exists {
-				conn.Write([]byte(strings.Join(value, ",") + "\r\n"))
 			} else {
 				conn.Write([]byte("(nil)\r\n"))
 			}
@@ -151,37 +141,12 @@ func handleConnection(conn net.Conn, srv *Server) {
 			value := srv.HandleLRange(args[0], args[1], start, end)
 			conn.Write([]byte("\r\n" + strings.Join(value, ",") + "\r\n"))
 
-		case "HREMOVE":
-			if len(args) != 1 {
-				conn.Write([]byte("\r\nERR wrong number of arguments for 'HREMOVELIST' command\r\n"))
-				continue
-			}
-			srv.HandleHRemove(args[0])
-			conn.Write([]byte("OK\r\n"))
-
-		case "HREMOVESTRINGFIELD":
+		case "LCLEAR":
 			if len(args) != 2 {
-				conn.Write([]byte("\r\nERR wrong number of arguments for 'HREMOVESTRINGFIELD' command\r\n"))
+				conn.Write([]byte("\r\nERR wrong number of arguments for 'LRANGE' command: Expected 4, but found " + string(len(args)) + "\r\n"))
 				continue
 			}
-			if srv.HandleHRemoveStringField(args[0], args[1]) {
-				conn.Write([]byte("OK\r\n"))
-				continue
-			} else {
-				conn.Write([]byte("\r\nEntry does not exist\r\n"))
-			}
-
-		case "HREMOVELISTFIELD":
-			if len(args) != 2 {
-				conn.Write([]byte("\r\nERR wrong number of arguments for 'HREMOVELISTFIELD' command\r\n"))
-				continue
-			}
-			if srv.HandleHRemoveListField(args[0], args[1]) {
-				conn.Write([]byte("OK\r\n"))
-				continue
-			} else {
-				conn.Write([]byte("\r\nEntry does not exist\r\n"))
-			}
+			conn.Write([]byte(srv.HandleLClear(args[0], args[1]) + "\r\n"))
 
 		default:
 			conn.Write([]byte("\r\nERR unknown command '" + command + "'\r\n"))
