@@ -41,11 +41,8 @@ func handleConnection(conn net.Conn, srv *Server) {
 			fmt.Println("Error reading from connection:", err)
 			return
 		}
-		// fmt.Println(strings.TrimSpace(string(buffer[:n])))
-		command, args, err := protocol.ParseRESP(strings.TrimSpace(string(buffer[:n])))
 
-		// fmt.Printf("Command: %s \r\n", command)
-		// fmt.Printf("Args: %s \r\n", args)
+		command, args, err := protocol.ParseRESP(strings.TrimSpace(string(buffer[:n])))
 
 		switch command {
 		case "HSET":
