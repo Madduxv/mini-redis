@@ -42,8 +42,14 @@ func ClearStorage(s *Storage) {
 	}
 }
 
+func (s *Storage) Del(key string) {
+	delete(s.HashStore, key)
+	delete(s.SetStore, key)
+	delete(s.LinkedListStore, key)
+}
+
 func (s *Storage) HSet(key, field, value string) {
-	if _, strStoreExists := s.HashStore[key]; !strStoreExists {
+	if _, hashStoreExists := s.HashStore[key]; !hashStoreExists {
 		s.HashStore[key] = make(map[string]string)
 	}
 	s.HashStore[key][field] = value
@@ -93,7 +99,6 @@ func (s *Storage) SRem(key, value string) int8 {
 	if len(s.SetStore[key]) == 0 {
 		return 0
 	}
-	// TODO: debug this function
 	for i := 0; i < len(s.SetStore[key]); i++ {
 		if s.SetStore[key][i] == value {
 			s.SetStore[key] = append(s.SetStore[key][:i], s.SetStore[key][i+1:]...)

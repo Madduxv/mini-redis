@@ -45,6 +45,15 @@ func handleConnection(conn net.Conn, srv *Server) {
 		command, args, err := protocol.ParseRESP(strings.TrimSpace(string(buffer[:n])))
 
 		switch command {
+
+		case "DEL":
+			if len(args) != 1 {
+				conn.Write([]byte("\r\nERR wrong number of arguments for 'DEL' command\r\n"))
+				continue
+			}
+			srv.HandleDel(args[0])
+			conn.Write([]byte("OK\r\n"))
+
 		case "HSET":
 			if len(args) != 3 {
 				conn.Write([]byte("\r\nERR wrong number of arguments for 'HSET' command\r\n"))

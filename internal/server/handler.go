@@ -14,6 +14,10 @@ func NewServer() *Server {
 	}
 }
 
+func (s *Server) HandleDel(key string) {
+	s.storage.Del(key)
+}
+
 func (s *Server) HandleHSet(key, field, value string) {
 	s.storage.HSet(key, field, value)
 }

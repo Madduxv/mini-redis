@@ -126,3 +126,31 @@ func TestHDel(t *testing.T) {
 		t.Errorf("HDel failed: Field '%v' still exists in StringStore with value '%v'", field, val)
 	}
 }
+
+func TestDel(t *testing.T) {
+	store := storage.NewStorage()
+	defer storage.ClearStorage(store)
+
+	key := "user:1234"
+	field := "name"
+	value := "Maddux"
+
+	store.HSet(key, field, value)
+
+	field1 := "genres"
+	value1 := "ITALIAN"
+	value2 := "JAPANESE"
+
+	store.RPush(key, field1, value1)
+	store.RPush(key, field1, value2)
+
+	store.Del(key)
+
+	if hash, hashExists := store.HashStore[key]; hashExists {
+		t.Errorf("Key was not removed from HashStore: Found %v", hash)
+	}
+	if node, linkedListExists := store.LinkedListStore[key]; linkedListExists {
+		t.Errorf("Key was not removed from LinkedListStore: Found %v", node)
+	}
+
+}
