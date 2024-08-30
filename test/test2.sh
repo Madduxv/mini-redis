@@ -57,4 +57,7 @@ echo -e "SGET\nMaddux's Group\n"
 
 sleep 1
 echo -e "HREM\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\n"
+
+sleep 1
+echo -e "DEL\n843c1744-f6c2-6118-6a62-96ea50c2ea1d\n"
 } | nc 127.0.0.1 6379

@@ -46,6 +46,8 @@ func handleConnection(conn net.Conn, srv *Server) {
 
 		switch command {
 
+		case "PING":
+			conn.Write([]byte("PONG\r\n"))
 		case "DEL":
 			if len(args) != 1 {
 				conn.Write([]byte("\r\nERR wrong number of arguments for 'DEL' command\r\n"))
