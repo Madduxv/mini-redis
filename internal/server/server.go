@@ -59,6 +59,29 @@ func handleConnection(conn net.Conn, srv *Server) {
 			srv.HandleDel(args[0])
 			conn.Write([]byte("OK\r\n"))
 
+		case "SET":
+			if len(args) != 2 {
+				conn.Write([]byte("ERR wrong number of arguments for 'SET' command\r\n"))
+				continue
+			}
+			srv.HandleSet(args[0], args[1])
+			conn.Write([]byte("OK\r\n"))
+
+		case "GET":
+			if len(args) != 1 {
+				conn.Write([]byte("ERR wrong number of arguments for 'GET' command\r\n"))
+				continue
+			}
+			conn.Write([]byte(srv.HandleGet(args[0]) + "\r\n"))
+
+		case "REM":
+			if len(args) != 1 {
+				conn.Write([]byte("ERR wrong number of arguments for 'REM' command\r\n"))
+				continue
+			}
+			srv.HandleRem(args[0])
+			conn.Write([]byte("OK\r\n"))
+
 		case "INCR":
 			if len(args) != 1 {
 				conn.Write([]byte("ERR wrong number of arguments for 'INCR' command\r\n"))

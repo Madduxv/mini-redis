@@ -14,6 +14,18 @@ func NewServer() *Server {
 	}
 }
 
+func (s *Server) HandleSet(key, value string) {
+	s.storage.Set(key, value)
+}
+
+func (s *Server) HandleGet(key string) string {
+	return s.storage.Get(key)
+}
+
+func (s *Server) HandleRem(key string) string {
+	return s.storage.Rem(key)
+}
+
 func (s *Server) HandleDel(key string) {
 	s.storage.Del(key)
 }

@@ -8,6 +8,7 @@ type Storage struct {
 	LinkedListStore map[string]map[string]*LinkedList
 	IntStore        map[string]int64
 	SetStore        map[string][]string
+	Store           map[string]string
 }
 
 type Node struct {
@@ -26,6 +27,7 @@ func NewStorage() *Storage {
 		LinkedListStore: make(map[string]map[string]*LinkedList),
 		IntStore:        make(map[string]int64),
 		SetStore:        make(map[string][]string),
+		Store:           make(map[string]string),
 	}
 }
 
@@ -42,12 +44,27 @@ func ClearStorage(s *Storage) {
 	for key := range s.SetStore {
 		delete(s.SetStore, key)
 	}
+	for key := range s.Store {
+		delete(s.Store, key)
+	}
+}
+
+func (s *Storage) Set(key, value string) {
+	s.Store[key] = value
+}
+
+func (s *Storage) Get(key string) string {
+	if value, exists := s.Store[key]; exists {
+		return value
+	}
+	return ""
 }
 
 func (s *Storage) Del(key string) {
 	delete(s.HashStore, key)
 	delete(s.SetStore, key)
 	delete(s.LinkedListStore, key)
+	delete(s.Store, key)
 }
 
 func (s *Storage) Incr(key string) {
@@ -55,6 +72,10 @@ func (s *Storage) Incr(key string) {
 		s.IntStore[key] = 0
 	}
 	s.IntStore[key] += 1
+}
+
+func (s *Storage) Rem(key string) {
+	delete(s.Store, key)
 }
 
 func (s *Storage) HSet(key, field, value string) {

@@ -20,6 +20,34 @@ func TestHSet(t *testing.T) {
 	}
 }
 
+func TestSetGetRem(t *testing.T) {
+	store := storage.NewStorage()
+	defer storage.ClearStorage(store)
+
+	var key string = "key:1234"
+	var value string = "value:1234"
+
+	if noVal := store.Get(key); noVal != "" {
+		t.Errorf("Get got data before anything was added: Found %s", noVal)
+	}
+
+	store.Set(key, value)
+
+	if val := store.Store[key]; val != value {
+		t.Errorf("Set failed: Value was not added correctly to store. Found %s", val)
+	}
+	if recievedVal := store.Get(key); recievedVal != store.Store[key] {
+		t.Errorf("Get Failed: Expected %s, but found %s", store.Store[key], recievedVal)
+	}
+
+	store.Rem(key)
+
+	if val, exists := store.Store[key]; exists {
+		t.Errorf("Rem Failed: Found %s", val)
+	}
+
+}
+
 func TestRPushLRange(t *testing.T) {
 	store := storage.NewStorage()
 	defer storage.ClearStorage(store)
