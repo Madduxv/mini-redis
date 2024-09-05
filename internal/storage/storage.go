@@ -6,6 +6,7 @@ type Storage struct {
 	HashStore map[string]map[string]string
 	// ListStore       map[string]map[string][]string
 	LinkedListStore map[string]map[string]*LinkedList
+	IntStore        map[string]int64
 	SetStore        map[string][]string
 }
 
@@ -23,6 +24,7 @@ func NewStorage() *Storage {
 		HashStore: make(map[string]map[string]string),
 		// ListStore:       make(map[string]map[string][]string),
 		LinkedListStore: make(map[string]map[string]*LinkedList),
+		IntStore:        make(map[string]int64),
 		SetStore:        make(map[string][]string),
 	}
 }
@@ -46,6 +48,13 @@ func (s *Storage) Del(key string) {
 	delete(s.HashStore, key)
 	delete(s.SetStore, key)
 	delete(s.LinkedListStore, key)
+}
+
+func (s *Storage) Incr(key string) {
+	if _, exists := s.IntStore[key]; !exists {
+		s.IntStore[key] = 0
+	}
+	s.IntStore[key] += 1
 }
 
 func (s *Storage) HSet(key, field, value string) {

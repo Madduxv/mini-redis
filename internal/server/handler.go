@@ -18,6 +18,10 @@ func (s *Server) HandleDel(key string) {
 	s.storage.Del(key)
 }
 
+func (s *Server) HandleIncr(key string) {
+	s.storage.Incr(key)
+}
+
 func (s *Server) HandleHSet(key, field, value string) {
 	s.storage.HSet(key, field, value)
 }
