@@ -1,12 +1,14 @@
 package storage
 
-import "errors"
+import (
+	"errors"
+	"strconv"
+)
 
 type Storage struct {
 	HashStore map[string]map[string]string
 	// ListStore       map[string]map[string][]string
 	LinkedListStore map[string]map[string]*LinkedList
-	IntStore        map[string]int64
 	SetStore        map[string][]string
 	Store           map[string]string
 }
@@ -25,7 +27,6 @@ func NewStorage() *Storage {
 		HashStore: make(map[string]map[string]string),
 		// ListStore:       make(map[string]map[string][]string),
 		LinkedListStore: make(map[string]map[string]*LinkedList),
-		IntStore:        make(map[string]int64),
 		SetStore:        make(map[string][]string),
 		Store:           make(map[string]string),
 	}
@@ -68,10 +69,12 @@ func (s *Storage) Del(key string) {
 }
 
 func (s *Storage) Incr(key string) {
-	if _, exists := s.IntStore[key]; !exists {
-		s.IntStore[key] = 0
+	if _, exists := s.Store[key]; !exists {
+		s.Store[key] = "0"
 	}
-	s.IntStore[key] += 1
+	if value, err := strconv.ParseInt(s.Store[key], 10, 64); err == nil {
+		s.Store[key] = strconv.FormatInt(value+1, 10)
+	}
 }
 
 func (s *Storage) Rem(key string) {

@@ -48,6 +48,35 @@ func TestSetGetRem(t *testing.T) {
 
 }
 
+func TestIncr(t *testing.T) {
+	store := storage.NewStorage()
+	defer storage.ClearStorage(store)
+
+	var key string = "key:1234"
+	var key1 string = "key:4321"
+	var value string = "value:1234"
+	var intValue string = "11"
+
+	store.Set(key, intValue)
+	store.Set(key1, value)
+
+	store.Incr(key)
+	if val := store.Store[key]; val != "12" {
+		t.Errorf("Incr Failed: Expected 12, but Found %s", val)
+	}
+
+	store.Incr(key1)
+	if val := store.Store[key1]; val != value {
+		t.Errorf("Incr Failed: Expected %s, but Found %s", value, val)
+	}
+
+	store.Incr("newKey")
+	if val := store.Store["newKey"]; val != "1" {
+		t.Errorf("Incr Failed: Expected 1, but found Found %s", val)
+	}
+
+}
+
 func TestRPushLRange(t *testing.T) {
 	store := storage.NewStorage()
 	defer storage.ClearStorage(store)
