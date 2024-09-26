@@ -44,7 +44,7 @@ func handleConnection(conn net.Conn, srv *Server) {
 		}
 
 		command, args, err := protocol.ParseRESP(strings.TrimSpace(string(buffer[:n])))
-		fmt.Printf("Cmd: %s, Args: %v\r\n", command, strings.Join(args, ","))
+		// fmt.Printf("Cmd: %s, Args: %v\r\n", command, strings.Join(args, ","))
 
 		switch command {
 

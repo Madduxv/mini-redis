@@ -22,8 +22,8 @@ func (s *Server) HandleGet(key string) string {
 	return s.storage.Get(key)
 }
 
-func (s *Server) HandleRem(key string) string {
-	return s.storage.Rem(key)
+func (s *Server) HandleRem(key string) {
+	s.storage.Rem(key)
 }
 
 func (s *Server) HandleDel(key string) {
