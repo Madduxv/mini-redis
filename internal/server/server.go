@@ -170,6 +170,13 @@ func handleConnection(conn net.Conn, srv *Server) {
 				conn.Write([]byte("(nil)\r\n"))
 			}
 
+		case "SCARD":
+			if len(args) != 1 {
+				conn.Write([]byte("ERR wrong number of arguments for 'SCARD' command\r\n"))
+				continue
+			}
+			conn.Write([]byte(string(srv.HandleSCard(args[0]))))
+
 		case "LRANGE":
 			if len(args) != 4 {
 				conn.Write([]byte("ERR wrong number of arguments for 'LRANGE' command: Expected 4, but found " + string(len(args)) + "\r\n"))

@@ -74,6 +74,10 @@ func (s *Server) HandleSGet(key string) ([]string, bool) {
 	return s.storage.SGet(key)
 }
 
+func (s *Server) HandleSCard(key string) int {
+	return s.storage.SCard(key)
+}
+
 func (s *Server) HandleHDel(key string, field string) bool {
 	return s.storage.HDel(key, field)
 }

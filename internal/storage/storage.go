@@ -141,6 +141,13 @@ func (s *Storage) SRem(key, value string) int8 {
 	return 0
 }
 
+func (s *Storage) SCard(key string) int {
+	if _, exists := s.SetStore[key]; !exists {
+		return 0
+	}
+	return len(s.SetStore[key])
+}
+
 func (s *Storage) RPush(key, field, value string) {
 	if _, keyExists := s.LinkedListStore[key]; !keyExists {
 		s.LinkedListStore[key] = make(map[string]*LinkedList)
